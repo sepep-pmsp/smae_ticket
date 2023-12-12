@@ -24,11 +24,24 @@ class APISession:
             
         raise HTTPError(str(resp.json()))
 
+    def __identificar_sessao_inativa(self, resp:Response)->None:
+
+        if resp.status_code == 401:
+            resp = resp.json()
+            if resp['message']=='Sessão não está mais ativa' or resp['message']=='Acesso Não Autorizado.':
+                raise SessaoInativa(str(resp))
+            else:
+                raise HTTPError(str(resp))
+        
+        return resp
+    
+    def build_url(self, endpoint:str)->str:
+
+        return self.host+endpoint
 
     def get_token(self, user:str, passw:str)->str:
 
-        endpoint = 'login'
-        url = self.host+endpoint
+        url = self.build_url('login')
 
         data = {
         "email": user,
@@ -53,13 +66,22 @@ class APISession:
         except Exception as e:
             raise e
         
-    def get(self, *args, **kwargs)->Any:
+    def get(self, endpoint:str, *args, **kwargs)->Any:
         
-        return self.session.get(*args, **kwargs)
 
-    def post(self, *args, **kwargs)->Any:
+        url = self.build_url(endpoint)
+        resp = self.session.get(url, *args, **kwargs)
+        self.__identificar_sessao_inativa(resp)
 
-        return self.session.post(*args, **kwargs)    
+        return resp
+
+    def post(self, endpoint:str, *args, **kwargs)->Any:
+
+        url = self.build_url(endpoint)
+        resp = self.session.post(url, *args, **kwargs)
+        self.__identificar_sessao_inativa(resp)
+
+        return resp  
         
     
         
