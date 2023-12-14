@@ -20,3 +20,15 @@ def login_required(func):
             return func(*args, **kwargs)        
 
     return wrapper
+
+
+def json_resp(func):
+    '''Parseia a resposta como json'''
+
+    def wrapper(*args, **kwargs):
+
+        resp = func(*args, **kwargs)
+
+        return resp.json()
+    
+    return wrapper

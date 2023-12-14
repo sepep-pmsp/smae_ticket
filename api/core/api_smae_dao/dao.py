@@ -1,5 +1,5 @@
 from .api_session import APISession
-from .login_decorator import login_required
+from .decorators import login_required, json_resp
 
 class DAO:
 
@@ -13,6 +13,7 @@ class DAO:
 
         self.session.login(user, passw)
 
+    @json_resp
     @login_required
     def user_data(self):
 
