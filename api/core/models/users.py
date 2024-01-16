@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from .database import Base
 from .estrutura_administrativa import Orgao
+from .tickets import Ticket
 
 #evitando import circular
 from typing import TYPE_CHECKING
@@ -27,7 +28,6 @@ perfil_permissao = Table(
 
 
 
-
 class User(Base):
     __tablename__ = "users"
 
@@ -40,6 +40,7 @@ class User(Base):
     orgao_id: Mapped[int] = mapped_column(ForeignKey("orgaos.id"))
     orgao: Mapped[Orgao] = relationship(back_populates="usuarios")
     perfis: Mapped[List["Perfil"]] = relationship(secondary=user_perfil)
+    tickets : Mapped[List["Ticket"]] = relationship(back_populates="usuario")
 
 class Perfil(Base):
     __tablename__ = "perfis"
@@ -49,6 +50,7 @@ class Perfil(Base):
     description : Mapped[str] = mapped_column()
 
     permissoes: Mapped[List["Permissao"]] = relationship(secondary=perfil_permissao)
+    users: Mapped[List["User"]] = relationship(secondary=user_perfil)
 
 
 class Permissao(Base):
