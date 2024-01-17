@@ -10,22 +10,9 @@ from .tickets import Ticket
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .estrutura_administrativa import Orgao
+    from .chamado import Chamado
 
-user_perfil = Table(
-    "user_perfil",
-    Base.metadata,
-    Column("user_id", ForeignKey("users.id")),
-    Column("perfil_id", ForeignKey("perfis.id")),
-)
-
-
-perfil_permissao = Table(
-    "perfil_permissao",
-    Base.metadata,
-    Column("perfil_id", ForeignKey("perfis.id")),
-    Column("permissao_id", ForeignKey("permissoes.id")),
-)
-
+from .cross_tables import user_perfil, perfil_permissao
 
 
 class User(Base):
@@ -39,8 +26,8 @@ class User(Base):
     
     orgao_id: Mapped[int] = mapped_column(ForeignKey("orgaos.id"))
     orgao: Mapped[Orgao] = relationship(back_populates="usuarios")
-    perfis: Mapped[List["Perfil"]] = relationship(secondary=user_perfil)
-    tickets : Mapped[List["Ticket"]] = relationship(back_populates="usuario")
+    perfis: Mapped[List["Perfil"]] = relationship(secondary=user_perfil, back_populates='users')
+    chamados : Mapped[Optional[List["Chamado"]]] = relationship()
 
 class Perfil(Base):
     __tablename__ = "perfis"
@@ -50,7 +37,7 @@ class Perfil(Base):
     description : Mapped[str] = mapped_column()
 
     permissoes: Mapped[List["Permissao"]] = relationship(secondary=perfil_permissao)
-    users: Mapped[List["User"]] = relationship(secondary=user_perfil)
+    users: Mapped[Optional[List["User"]]] = relationship(secondary=user_perfil, back_populates='perfis')
 
 
 class Permissao(Base):

@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from typing import List, Optional
 
@@ -17,7 +17,7 @@ class TipoOrgao(Base):
     tipo : Mapped[str] = mapped_column(unique=True)
     desc : Mapped[str]
     is_ativo : Mapped[bool]
-    orgaos: Mapped[List["Orgao"]] = relationship()
+    orgaos: Mapped[Optional[List["Orgao"]]] = relationship()
     
 class Orgao(Base):
     __tablename__ = "orgaos"
@@ -26,8 +26,9 @@ class Orgao(Base):
     sigla : Mapped[str] = mapped_column(String(10))
     nome : Mapped[str]
     is_ativo : Mapped[bool]
+
     tipo_orgao_id: Mapped[int] = mapped_column(ForeignKey("tipos_orgao.id"))
     tipo_orgao: Mapped["TipoOrgao"] = relationship(back_populates="orgaos")
-    usuarios : Mapped[List["User"]] = relationship(back_populates='orgao')
+    usuarios : Mapped[Optional[List["User"]]] = relationship()
 
 
