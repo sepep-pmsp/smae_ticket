@@ -15,16 +15,20 @@ class Perfil(Base):
     __tablename__ = "perfis"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    title :  Mapped[str] = mapped_column()
-    desc : Mapped[str] = mapped_column()
+    title :  Mapped[str] = mapped_column(index=True)
+    desc : Mapped[str]
 
     permissoes: Mapped[List["Permissao"]] = relationship(secondary=perfil_permissao)
     users: Mapped[Optional[List["User"]]] = relationship(secondary=user_perfil, back_populates='perfis')
+
+    is_ativo: Mapped[bool]
 
 
 class Permissao(Base):
     __tablename__ = "permissoes"
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    desc = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(index=True)
+    desc: Mapped[str]
+
+    is_ativo: Mapped[bool]

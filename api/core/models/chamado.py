@@ -34,6 +34,8 @@ class Chamado(Base):
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     user: Mapped["User"] = relationship(back_populates='chamados')
+    #aqui eh uma representacao congelada do usuario
+    users_repr : Mapped[str]
 
     tickets: Mapped[Optional[List["Ticket"]]] = relationship(secondary=chamado_ticket, back_populates='chamados')
     assuntos: Mapped[List["Assunto"]] = relationship(secondary=chamado_assunto, back_populates='chamados_relacionados')
